@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fa">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="Css/bootstrap.min.css" />
+  <link rel="stylesheet" href="Css/bootstrap-Icon.min.css" />
+  <link rel="stylesheet" href="Css/newAnimate.css" />
+  <link rel="stylesheet" href="Css/Style.css" />
+  <link rel="shortcut icon" href="Image/favicon.ico" type="image/x-icon">
+  <title>Tv Time</title>
+</head>
+
+<body>
+
+  <div class="Navbar-class">
+    <div class="container py-md-4 py-3">
+      <div class="row">
+        <div class="col-md-8 col-3">
+          <nav class="navbar navbar-expand-lg">
+            <button class="navbar-toggler first-button" type="button" data-bs-toggle="collapse"
+              data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+              aria-label="">
+              <div class="animated-icon1"><span></span><span></span><span></span></div>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav">
+                <li class="nav-item active">
+                  <a class="nav-link" href="/">Home</a>
+                </li>
+              </ul>
+            </div>
+          </nav>
+        </div>
+        <div class="col-md-3 col-6">
+          <div class="SideNav">
+            <div class="ChangeThemeBox">
+              <div class="CustomColorPicker">
+                <input type="color" id="firstColorInput">
+                <input type="color" id="secondColorInput">
+              </div>
+              <button class="ChangeColorBtn" onclick="changeColor()">
+                <span class="color01">.</span>
+                <span class="color02">.</span>
+              </button>
+              <button class="ChangeColorBtn ChangeColorBtn01" onclick="changeColor01()">
+                <span class="color01">.</span>
+                <span class="color02">.</span>
+              </button>
+              <div id="ThemeBoxSwitch">
+                <input type="checkbox" class="checkbox" id="ThemeBoxSwitchInput">
+                <label class="label" for="ThemeBoxSwitchInput">
+                  <i class="bi bi-moon"></i>
+                  <i class="bi bi-sun"></i>
+                  <div class="ball"></div>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-1 col-3">
+          <div class="logo-header">
+            <a href="/"><img class="w-50" src="Image/logo.png" alt="pic"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <section class="Homepage Hero">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-8 col-12">
+          <h1>Your Watched Show Collection</h1>
+          <p>Every show, season, and episode you tracked in TV Time — now offline and always available.</p>
+        </div>
+        <div class="col-md-4 col-12">
+          <div class="Hero-box">
+            <button class="btn btn-success">
+              <i class="bi bi-collection-play"></i> <span id="topShowCount">0</span> shows
+            </button>
+            <button id="clearCacheBtn" class="btn btn-outline-danger">
+              <i class="bi bi-trash3"></i> Clear cache
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row g-3 mt-2">
+        <div class="col-6 col-md-3">
+          <div class="stat-card">
+            <div class="stat-num num" id="statTotalShows">0</div>
+            <div class="stat-label">Total shows</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-card ok">
+            <div class="stat-num num" id="statWatchedEp">0</div>
+            <div class="stat-label">Episodes watched</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-card cont">
+            <div class="stat-num num" id="statContinuing">0</div>
+            <div class="stat-label">Currently airing</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-card accent">
+            <div class="stat-num num" id="statFav">0</div>
+            <div class="stat-label">Favorites</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="Homepage Progress">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <div id="enrichBar" class="enrich-bar hidden">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="small ">
+                <i class="bi bi-cloud-download"></i>
+                Fetching TVMaze data...
+              </span>
+              <span id="enrichCount" class="small fw-semibold">
+                100%
+              </span>
+            </div>
+            <div class="progress">
+              <div id="enrichFill" class="progress-bar progress-bar-striped progress-bar-animated bg-primary"
+                role="progressbar" style="width:100%">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="Homepage Controls">
+    <div class="container d-flex flex-wrap align-items-center gap-2">
+      <input type="text" id="searchInput" class="form-control search-box" style="max-width:280px;"
+        placeholder="Search show title...">
+
+      <div class="d-flex flex-wrap gap-2" id="filterChips">
+        <button class="filter-chip active" data-status="all">All</button>
+        <button class="filter-chip" data-status="up_to_date">Watched</button>
+        <button class="filter-chip" data-status="continuing">Airing</button>
+        <button class="filter-chip" data-status="watch_later">Watch Later</button>
+        <button class="filter-chip" data-status="not_started_yet">Not Started</button>
+        <button class="filter-chip" data-fav="1">⭐ Favorites</button>
+      </div>
+
+      <select id="sortSelect" class="form-select sort-select ms-auto" style="max-width:190px;">
+        <option value="title">Sort: Name (A-Z)</option>
+        <option value="progress">Sort: Most Progress</option>
+        <option value="episodes">Sort: Most Episodes</option>
+        <option value="recent">Sort: Recently Watched</option>
+      </select>
+    </div>
+  </section>
+  <section class="Homepage Series">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <div id="grid" class="row g-3"></div>
+          <div id="emptyState" class="empty-state d-none">
+            <i class="bi bi-search"></i>
+            Nothing matches this filter.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-4 col-12 wow fadeInUp" data-wow-delay=".3s">
+          <div class="footer-box footer-address">
+            <div class="logo-footer">
+              <a href="/"><img class="w-25" src="Image/logo.png" alt="pic"></a>
+            </div>
+            <p>Lorem Ipsum is a <span>fake text</span> produced by the printing industry with the help of
+              graphic designers.
+            </p>
+            <ul class="sm-list">
+              <li><a href="#" target="_blank"><i class="bi bi-instagram"></i></a></li>
+              <li><a href="#" target="_blank"><i class="bi bi-telegram"></i></a></li>
+              <li><a href="#" target="_blank"><i class="bi bi-whatsapp"></i></a></li>
+              <li><a href="#" target="_blank"><i class="bi bi-twitter"></i></a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-1 col-12"></div>
+        <div class="col-md-3 col-12 wow fadeInUp" data-wow-delay=".5s">
+          <div class="footer-box footer-links">
+            <h5><span>Quick </span>access</h5>
+            <ul>
+              <li><i class="bi bi-chevron-double-right"></i><a href="/">Home</a></li>
+              <li><i class="bi bi-chevron-double-right"></i><a href="#">About us</a></li>
+              <li><i class="bi bi-chevron-double-right"></i><a href="#">Contact us</a></li>
+              <li><i class="bi bi-chevron-double-right"></i><a href="#">Products</a></li>
+            </ul>
+          </div>
+
+
+        </div>
+        <div class="col-md-4 col-12 wow fadeInUp" data-wow-delay=".7s">
+          <div class="footer-box footer-contact">
+            <h5><span>Communicative </span>ways</h5>
+            <ul>
+              <li><i class="bi bi-geo-alt"></i><a href="#">address</a></li>
+              <li><i class="bi bi-phone"></i><a href="tel:+982177123456">021-77123456</a></li>
+              <li><i class="bi bi-telephone"></i><a href="tel:+982177123456">021-77123456</a></li>
+              <li><i class="bi bi-envelope-at"></i><a href="mailto:example@support.com">example@support.com</a></li>
+            </ul>
+
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 text-center">
+          <div class="copyright">
+            <p>Copyright © 2026 for Tv Time. Designed by <a href="http://nextlancer.ir/" title="nextlancer"
+                target="_blank">Next Lancer</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/wow.min.js"></script>
+  <script src="js/db01.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/source.js"></script>
+
+</body>
+
+</html>
