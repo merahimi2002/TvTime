@@ -619,7 +619,7 @@ footer .sm-list li:hover .bi {
 
 /* End Footer */
 
-:root {
+.Homepage {
     --bg-0: #0b0e14;
     --bg-1: #12161f;
     --bg-2: #181d29;
@@ -877,7 +877,7 @@ footer .sm-list li:hover .bi {
     gap: .5rem;
     flex: 1;
     position: absolute;
-    bottom: -25%;
+    bottom: -24%;
     right: 0;
     width: 100%;
     z-index: 9;
@@ -888,10 +888,6 @@ footer .sm-list li:hover .bi {
 
 .Series .show-card:hover .show-body {
     bottom: 0;
-}
-
-.Series .poster-initial {
-    display: none;
 }
 
 .Series .show-title {
@@ -937,25 +933,21 @@ footer .sm-list li:hover .bi {
     border-radius: 9px;
     padding: .4rem;
     width: 100%;
+    pointer-events: auto;
 }
 
 .Series .expand-btn:hover {
-    border-color: var(--accent);
-    color: var(--accent);
+    border-color: rgb(var(--second-color));
+    color: rgb(var(--second-color));
 }
 
 /* detail  */
 
 .Series .detail-panel {
-    display: none;
     border-top: 1px solid var(--line);
     padding: .7rem .8rem .85rem;
     background-color: rgba(0, 0, 0, 0.5);
     color: white;
-}
-
-.Series .detail-panel.open {
-    display: block;
     position: absolute;
     top: -10px;
     right: 0;
@@ -963,10 +955,28 @@ footer .sm-list li:hover .bi {
     height: calc(100% + 10px);
     overflow-y: auto;
     padding-bottom: 60px;
+    transform: translate(0px, 100%);
+    transition: 0.4s;
+}
+
+.Series .detail-panel.open {
+    transform: translate(0px, 0%);
 }
 
 .Series .show-card:has(.detail-panel.open) .poster-fake.has-image {
     filter: blur(10px);
+}
+
+.Series .show-card:has(.detail-panel.open) .show-body {
+    pointer-events: none;
+}
+
+.Series .show-body .rating-badge,
+.Series .show-body .show-title,
+.Series .show-body .show-network,
+.Series .show-body .ep-count,
+.Series .show-body .progress {
+    transition: 0.4s;
 }
 
 .Series .show-card:has(.detail-panel.open) .show-body .rating-badge,
@@ -974,7 +984,7 @@ footer .sm-list li:hover .bi {
 .Series .show-card:has(.detail-panel.open) .show-body .show-network,
 .Series .show-card:has(.detail-panel.open) .show-body .ep-count,
 .Series .show-card:has(.detail-panel.open) .show-body .progress {
-    display: none;
+    opacity: 0;
 }
 
 .Series .about-block {
@@ -1024,6 +1034,7 @@ footer .sm-list li:hover .bi {
     display: flex;
     align-items: center;
     gap: .5rem;
+    margin-top: 30px;
 }
 
 .Series .spin {

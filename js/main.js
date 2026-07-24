@@ -57,11 +57,10 @@ function buildCard(show, idx) {
         ${hasImage ? `<img src="${cached.image}" alt="" loading="lazy" class="poster-img">` : ''}
         ${show.fav ? '<div class="fav-badge"><i class="bi bi-star-fill"></i></div>' : ''}
         <div class="status-badge ${statusCls}">${statusText}</div>
-        
+        <span class="poster-initial" style="position:relative;z-index:1;">${initials(show.title)}</span>
       </div>
       <div class="show-body">
-      ${cached && cached.rating ? `<div class="rating-badge"><i class="bi bi-star-fill"></i>${cached.rating}</div>` : ''}
-        <span class="poster-initial" style="position:relative;z-index:1;">${initials(show.title)}</span>
+        ${cached && cached.rating ? `<div class="rating-badge"><i class="bi bi-star-fill"></i>${cached.rating}</div>` : ''}
         <div class="show-title">${show.title}</div>
         ${cached && cached.network ? `<div class="show-network">${cached.network}${cached.premiered ? ' &middot; ' + cached.premiered : ''}</div>` : ''}
         <div class="ep-count">${toFa(st.watched)} / ${toFa(st.total)} episodes</div>
