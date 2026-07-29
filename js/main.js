@@ -1,4 +1,3 @@
-
 const STATUS_LABEL = {
     up_to_date: "Watched",
     continuing: "Airing",
@@ -291,6 +290,10 @@ function applyEnrichment(idx) {
         const aboutEl = panel.querySelector('.about-block');
         if (aboutEl) fillAboutBlock(aboutEl, show);
     }
+
+    // officialStatus just arrived from TVMaze — if the Running filter is on,
+    // this show may need to appear/disappear, so refresh the grid.
+    if (currentFilter.official) render();
 }
 
 let enrichQueue = [];
@@ -362,13 +365,22 @@ function initEnrichment() {
     if (!queueRunning) processQueue();
 }
 
-let currentFilter = { status: 'all', fav: false, search: '' };
+let currentFilter = { status: 'all', fav: false, search: '', official: '', unwatchedOnly: false };
 let currentSort = 'title';
 
 function filteredShows() {
     let list = SHOWS_DATA.filter(s => {
         if (currentFilter.status !== 'all' && s.status !== currentFilter.status) return false;
         if (currentFilter.fav && !s.fav) return false;
+        if (currentFilter.official) {
+            const cached = s.tvdb ? tvmazeCache[s.tvdb] : null;
+            if (!cached || cached.officialStatus !== currentFilter.official) return false;
+            if (currentFilter.unwatchedOnly) {
+                // specials (se.sp) don't count — only "real" seasons matter here
+                const hasUnwatched = s.seasons.some(se => !se.sp && se.eps.some(ep => !ep.w));
+                if (!hasUnwatched) return false;
+            }
+        }
         if (currentFilter.search && !s.title.toLowerCase().includes(currentFilter.search)) return false;
         return true;
     });
@@ -463,9 +475,33 @@ document.getElementById('filterChips').addEventListener('click', (e) => {
         return;
     }
 
+    if (chip.dataset.official) {
+        chip.classList.toggle('active');
+        currentFilter.official = chip.classList.contains('active') ? chip.dataset.official : '';
+        if (!currentFilter.official) {
+            // "unwatched only" only makes sense together with Running, so drop it too
+            currentFilter.unwatchedOnly = false;
+            const unwatchedToggle = document.getElementById('unwatchedToggle');
+            if (unwatchedToggle) unwatchedToggle.checked = false;
+        }
+        render();
+        return;
+    }
+
     document.querySelectorAll('.filter-chip[data-status]').forEach(c => c.classList.remove('active'));
     chip.classList.add('active');
     currentFilter.status = chip.dataset.status;
+    render();
+});
+
+document.getElementById('unwatchedToggle').addEventListener('change', (e) => {
+    currentFilter.unwatchedOnly = e.target.checked;
+    if (currentFilter.unwatchedOnly && currentFilter.official !== 'Running') {
+        // this toggle only means something combined with Running, so turn it on too
+        const runningChip = document.querySelector('.filter-chip[data-official="Running"]');
+        if (runningChip) runningChip.classList.add('active');
+        currentFilter.official = 'Running';
+    }
     render();
 });
 
