@@ -47436,7 +47436,7 @@ const SHOWS_DATA = [
     uuid: "7e6ed2f6-58ae-4dfb-b6d5-a9d95b3c54ce",
     tvdb: 367506,
     title: "The Lord of the Rings: The Rings of Power",
-    status: "continuing",
+    status: "up_to_date",
     fav: false,
     created: "2022-09-02T09:46:12.873835Z",
     seasons: [
@@ -50562,7 +50562,7 @@ const SHOWS_DATA = [
     uuid: "723e1507-d827-4fba-9898-7434d574e89c",
     tvdb: 413033,
     title: "Berlin (2023)",
-    status: "continuing",
+    status: "up_to_date",
     fav: false,
     created: "2024-01-01T14:05:21.465463Z",
     seasons: [
