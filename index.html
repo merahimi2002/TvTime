@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="en">
 
 <head>
   <meta charset="UTF-8" />
@@ -15,6 +15,27 @@
 
 <body>
 
+  <div id="appErrorBar" class="app-error-bar d-none" role="alert"></div>
+  <div id="profileSelector" class="profile-selector d-none" role="dialog" aria-modal="true"
+    aria-labelledby="profileSelectorTitle">
+    <div class="profile-selector-card">
+      <div class="profile-brand"><i class="bi bi-play-btn-fill"></i></div>
+      <h2 id="profileSelectorTitle">Select User</h2>
+      <p>Select a local profile. Each profile keeps its own JSON data and progress.</p>
+      <div class="profile-options">
+        <button class="profile-option" data-profile-id="ebi">
+          <span class="profile-avatar">E</span>
+          <span>Ebi</span>
+        </button>
+        <button class="profile-option" data-profile-id="dobby">
+          <span class="profile-avatar">D</span>
+          <span>Dobby</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
   <div class="Navbar-class">
     <div class="container py-md-4 py-3">
       <div class="row">
@@ -26,10 +47,27 @@
               <div class="animated-icon1"><span></span><span></span><span></span></div>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <div class="profile-menu dropdown">
+                <button class="profile-menu-toggle dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  <span id="activeProfileIcon" class="profile-mini-avatar">?</span>
+                  <span class="profile-menu-copy">
+                    <strong id="activeProfileName">User</strong>
+                  </span>
+                </button>
+                <ul class="dropdown-menu profile-dropdown-menu">
+                  <li><button id="switchProfileBtn" class="dropdown-item" type="button"><i class="bi bi-people"></i>
+                      Switch user</button></li>
+                </ul>
+              </div>
               <ul class="navbar-nav">
                 <li class="nav-item active">
-                  <a class="nav-link" href="/">Home</a>
+                  <a class="nav-link" href="#home">Home</a>
                 </li>
+                <li class="nav-item"><a class="nav-link" href="#personalDashboard">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="#exploreSection">Explore</a></li>
+                <li class="nav-item"><a class="nav-link" href="#librarySection">Library</a></li>
+                <li class="nav-item"><a class="nav-link" href="#recoveryCenter">Recovery</a></li>
               </ul>
             </div>
           </nav>
@@ -68,7 +106,7 @@
       </div>
     </div>
   </div>
-  <section class="Homepage Hero">
+  <section class="Homepage Hero" id="home">
     <div class="container">
       <div class="row">
         <div class="col-md-8 col-12">
@@ -77,36 +115,37 @@
         </div>
         <div class="col-md-4 col-12">
           <div class="Hero-box">
-            <button class="btn btn-success">
-              <i class="bi bi-collection-play"></i> <span id="topShowCount">0</span> shows
-            </button>
             <button id="clearCacheBtn" class="btn btn-outline-danger">
               <i class="bi bi-trash3"></i> Clear cache
             </button>
           </div>
         </div>
       </div>
-      <div class="row g-3 mt-2">
+      <div class="row g-3 mt-2 dashboard-stats">
         <div class="col-6 col-md-3">
           <div class="stat-card">
-            <div class="stat-num num" id="statTotalShows">0</div>
-            <div class="stat-label">Total shows</div>
+            <div class="stat-icon"><i class="bi bi-collection-play"></i></div>
+            <div class="stat-num num" id="statShows">0</div>
+            <div class="stat-label">Shows watched</div>
           </div>
         </div>
         <div class="col-6 col-md-3">
           <div class="stat-card ok">
+            <div class="stat-icon"><i class="bi bi-check2-circle"></i></div>
             <div class="stat-num num" id="statWatchedEp">0</div>
             <div class="stat-label">Episodes watched</div>
           </div>
         </div>
         <div class="col-6 col-md-3">
-          <div class="stat-card cont">
-            <div class="stat-num num" id="statContinuing">0</div>
-            <div class="stat-label">Currently airing</div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="bi bi-clock-history"></i></div>
+            <div class="stat-num num watch-time-value" id="statWatchTime">0mo 0d 0h 0m</div>
+            <div class="stat-label">Time watched</div>
           </div>
         </div>
         <div class="col-6 col-md-3">
           <div class="stat-card accent">
+            <div class="stat-icon"><i class="bi bi-star-fill"></i></div>
             <div class="stat-num num" id="statFav">0</div>
             <div class="stat-label">Favorites</div>
           </div>
@@ -138,26 +177,72 @@
       </div>
     </div>
   </section>
+  <section class="Homepage Dashboard" id="personalDashboard">
+    <div class="container">
+      <div class="dashboard-heading">
+        <div>
+          <span class="dashboard-kicker">Personal dashboard</span>
+          <h2>Pick up where you left off</h2>
+        </div>
+        <span id="dashboardUpdated" class="dashboard-updated"></span>
+      </div>
+
+      <div class="dashboard-block" id="continueBlock">
+        <div class="dashboard-block-head">
+          <div><i class="bi bi-play-circle-fill"></i><span>Continue Watching</span></div>
+          <button class="dashboard-view-all" type="button" data-dashboard-filter="watching">View all</button>
+        </div>
+        <div id="continueWatchingRail" class="dashboard-rail"></div>
+      </div>
+
+      <div class="dashboard-block" id="newEpisodesBlock">
+        <div class="dashboard-block-head">
+          <div><i class="bi bi-bell-fill"></i><span>New Episodes</span><span id="dashboardEpisodeBadge"
+              class="dashboard-count-badge">0</span></div><button class="dashboard-view-all" type="button"
+            data-open-episode-modal="new">View all</button>
+        </div>
+        <div id="newEpisodesRail" class="dashboard-rail"></div>
+      </div>
+
+      <div class="dashboard-block" id="upcomingBlock">
+        <div class="dashboard-block-head">
+          <div><i class="bi bi-calendar-week-fill"></i><span>Upcoming This Week</span></div><button
+            class="dashboard-view-all" type="button" data-open-episode-modal="upcoming">View all</button>
+        </div>
+        <div id="upcomingRail" class="dashboard-rail"></div>
+      </div>
+
+      <div class="dashboard-block" id="recentlyWatchedBlock">
+        <div class="dashboard-block-head">
+          <div><i class="bi bi-clock-history"></i><span>Recently Watched</span></div>
+        </div>
+        <div id="recentlyWatchedRail" class="dashboard-rail"></div>
+      </div>
+
+      <div class="dashboard-block" id="recentlyAddedBlock">
+        <div class="dashboard-block-head">
+          <div><i class="bi bi-plus-circle-fill"></i><span>Recently Added</span></div>
+        </div>
+        <div id="recentlyAddedRail" class="dashboard-rail"></div>
+      </div>
+    </div>
+  </section>
+
+
   <section class="Homepage Controls">
     <div class="container d-flex flex-wrap align-items-center gap-2">
       <input type="text" id="searchInput" class="form-control search-box" style="max-width:280px;"
         placeholder="Search show title...">
 
       <div class="d-flex flex-wrap gap-2" id="filterChips">
-        <button class="filter-chip active" data-status="all">All</button>
-        <button class="filter-chip" data-status="up_to_date">Watched</button>
-        <button class="filter-chip" data-status="continuing">Airing</button>
-        <button class="filter-chip" data-status="watch_later">Watch Later</button>
-        <button class="filter-chip" data-status="not_started_yet">Not Started</button>
-        <button class="filter-chip" data-official="Running">🟢 Running</button>
-        <div class="unwatched-toggle-wrap" title="Only show Running series with unwatched episodes (specials excluded)">
-          <input type="checkbox" class="unwatched-toggle-input" id="unwatchedToggle">
-          <label class="unwatched-toggle-label" for="unwatchedToggle">
-            <span class="unwatched-toggle-ball"></span>
-          </label>
-          <label for="unwatchedToggle" class="unwatched-toggle-text">Unwatched</label>
-        </div>
-        <button class="filter-chip" data-fav="1">⭐ Favorites</button>
+        <button class="filter-chip active" data-status="all">All <span class="filter-count">0</span></button>
+        <button class="filter-chip" data-fav="true"><i class="bi bi-star-fill"></i> Favorite <span
+            class="filter-count">0</span></button>
+        <button class="filter-chip" data-status="not_started">Not Started <span class="filter-count">0</span></button>
+        <button class="filter-chip" data-status="completed">Completed <span class="filter-count">0</span></button>
+        <button class="filter-chip" data-status="watching">Watching <span class="filter-count">0</span></button>
+        <button class="filter-chip" data-status="up_to_date">Up to Date <span class="filter-count">0</span></button>
+        <button class="filter-chip" data-status="watch_later">Watch Later <span class="filter-count">0</span></button>
       </div>
 
       <select id="sortSelect" class="form-select sort-select ms-auto" style="max-width:190px;">
@@ -168,7 +253,7 @@
       </select>
     </div>
   </section>
-  <section class="Homepage Series">
+  <section class="Homepage Series" id="librarySection">
     <div class="container">
       <div class="row">
         <div class="col-12">
@@ -177,10 +262,140 @@
             <i class="bi bi-search"></i>
             Nothing matches this filter.
           </div>
+          <nav id="libraryPagination" class="library-pagination d-none" aria-label="Library pagination">
+            <div id="libraryPageInfo" class="library-page-info"></div>
+            <div id="libraryPageButtons" class="library-page-buttons"></div>
+          </nav>
         </div>
       </div>
     </div>
   </section>
+  <div id="showManagerModal" class="tv-modal d-none" hidden role="dialog" aria-modal="true"
+    aria-labelledby="showManagerTitle">
+    <div class="tv-modal-card">
+      <button class="tv-modal-close" type="button" data-close-show-modal aria-label="Close"><i
+          class="bi bi-x-lg"></i></button>
+      <div class="tv-modal-icon"><i class="bi bi-plus-circle"></i></div>
+      <h2 id="showManagerTitle">Add a new show</h2>
+      <p class="tv-modal-help">Start typing a title, then select the correct TVMaze result. The ID and show details will
+        be prepared automatically.</p>
+      <form id="addShowForm" class="tv-form">
+        <label class="smart-add-field">
+          <span>Show title</span>
+          <input id="newShowTitle" class="form-control" type="search" maxlength="160" required
+            placeholder="Start typing, for example: Dark" autocomplete="off">
+          <div id="smartAddResults" class="smart-add-results d-none"></div>
+        </label>
+        <label>
+          <span>TVDB ID</span>
+          <input id="newShowTvdb" class="form-control" type="number" min="1" step="1"
+            placeholder="Filled automatically after selection">
+        </label>
+        <div id="smartAddPreview" class="smart-add-preview d-none"></div>
+        <label>
+          <span>Status</span>
+          <select id="newShowStatus" class="form-select">
+            <option value="not_started_yet" selected>Not Started</option>
+            <option value="watch_later">Watch Later</option>
+          </select>
+        </label>
+        <label class="tv-check-row">
+          <input id="newShowFavorite" type="checkbox">
+          <span>Add to Favorites</span>
+        </label>
+        <div id="addShowError" class="tv-form-error d-none"></div>
+        <div class="tv-modal-actions">
+          <button class="btn btn-outline-secondary" type="button" data-close-show-modal>Cancel</button>
+          <button class="btn btn-success" type="submit"><i class="bi bi-plus-lg"></i> Add show</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="deleteShowModal" class="tv-modal d-none" hidden role="dialog" aria-modal="true"
+    aria-labelledby="deleteShowTitle">
+    <div class="tv-modal-card tv-modal-card-small">
+      <button class="tv-modal-close" type="button" data-close-delete-modal aria-label="Close"><i
+          class="bi bi-x-lg"></i></button>
+      <div class="tv-modal-icon danger"><i class="bi bi-trash3"></i></div>
+      <h2 id="deleteShowTitle">Delete show?</h2>
+      <p id="deleteShowText" class="tv-modal-help"></p>
+      <div class="tv-modal-actions">
+        <button class="btn btn-outline-secondary" type="button" data-close-delete-modal>Cancel</button>
+        <button id="confirmDeleteShowBtn" class="btn btn-danger" type="button"><i class="bi bi-trash3"></i>
+          Delete</button>
+      </div>
+    </div>
+  </div>
+  <section class="Homepage Explore Series" id="exploreSection">
+    <div class="container">
+      <div class="dashboard-heading">
+        <div><span class="dashboard-kicker">Discover</span>
+          <h2>Explore shows</h2>
+        </div>
+        <button id="refreshExploreBtn" class="btn btn-outline-success btn-sm" type="button"><i
+            class="bi bi-arrow-clockwise"></i> Refresh</button>
+      </div>
+      <div class="explore-search-row">
+        <input id="exploreSearchInput" class="form-control" type="search" placeholder="Search TVMaze…"
+          autocomplete="off">
+        <button id="exploreSearchBtn" class="btn btn-success" type="button"><i class="bi bi-search"></i> Search</button>
+      </div>
+      <div id="exploreStatus" class="explore-status">Popular TVMaze shows</div>
+      <div id="exploreGrid" class="explore-grid"></div>
+    </div>
+  </section>
+
+  <section class="Homepage RecoveryCenter" id="recoveryCenter">
+    <div class="container">
+      <div class="recovery-heading">
+        <div><span class="dashboard-kicker">Local data protection</span>
+          <h2>Recovery Center</h2>
+          <p>Snapshots stay inside this browser. Downloaded backups keep the original TV Time-compatible JSON format.
+          </p>
+        </div>
+        <div class="recovery-health"><span class="recovery-health-dot"></span>
+          <div><strong>Database healthy</strong><small id="recoveryRetentionText">0 / 20 retained</small></div>
+        </div>
+      </div>
+      <div class="recovery-stat-grid">
+        <article class="recovery-stat-card"><i class="bi bi-person-circle"></i><span>Current profile</span><strong
+            id="recoveryProfileName">—</strong></article>
+        <article class="recovery-stat-card"><i class="bi bi-collection-play"></i><span>Shows</span><strong
+            id="recoveryShowCount">0</strong></article>
+        <article class="recovery-stat-card"><i class="bi bi-film"></i><span>Episodes</span><strong
+            id="recoveryEpisodeCount">0</strong></article>
+        <article class="recovery-stat-card"><i class="bi bi-device-ssd"></i><span>Current data</span><strong
+            id="recoveryStorageSize">0 B</strong></article>
+        <article class="recovery-stat-card"><i class="bi bi-clock-history"></i><span>Snapshots</span><strong
+            id="recoverySnapshotCount">0</strong></article>
+        <article class="recovery-stat-card recovery-latest"><i class="bi bi-shield-check"></i><span>Latest recovery
+            point</span><strong id="recoveryLatestSnapshot">No snapshots yet</strong></article>
+      </div>
+      <div class="recovery-actions-panel">
+        <div>
+          <h3>Protect this profile</h3>
+          <p>Snapshots stay local and downloaded backups remain compatible with your current TV Time data.</p>
+        </div>
+        <div class="recovery-action-buttons">
+          <button id="createSnapshotBtn" class="btn btn-outline-light" type="button"><i class="bi bi-camera"></i> Create
+            Snapshot</button>
+          <button id="downloadRecoveryBackupBtn" class="btn btn-success" type="button"><i class="bi bi-download"></i>
+            Download Backup</button>
+        </div>
+      </div>
+      <div class="snapshot-history">
+        <div class="snapshot-history-head">
+          <div><span class="dashboard-kicker">Browser-only restore points</span>
+            <h3>Snapshot History</h3>
+          </div><span class="snapshot-retention"><i class="bi bi-info-circle"></i> Oldest snapshots are removed after
+            20</span>
+        </div>
+        <div id="snapshotHistoryList" class="snapshot-history-list"></div>
+      </div>
+    </div>
+  </section>
+
   <footer>
     <div class="container">
       <div class="row">
@@ -205,10 +420,11 @@
           <div class="footer-box footer-links">
             <h5><span>Quick </span>access</h5>
             <ul>
-              <li><i class="bi bi-chevron-double-right"></i><a href="/">Home</a></li>
-              <li><i class="bi bi-chevron-double-right"></i><a href="#">About us</a></li>
-              <li><i class="bi bi-chevron-double-right"></i><a href="#">Contact us</a></li>
-              <li><i class="bi bi-chevron-double-right"></i><a href="#">Products</a></li>
+              <li><i class="bi bi-chevron-double-right"></i><a href="#home">Home</a></li>
+              <li><i class="bi bi-chevron-double-right"></i><a href="#personalDashboard">Dashboard</a></li>
+              <li><i class="bi bi-chevron-double-right"></i><a href="#exploreSection">Explore</a></li>
+              <li><i class="bi bi-chevron-double-right"></i><a href="#librarySection">Library</a></li>
+              <li><i class="bi bi-chevron-double-right"></i><a href="#recoveryCenter">Recovery</a></li>
             </ul>
           </div>
 
@@ -240,11 +456,95 @@
   </footer>
 
 
+  <div id="clearCacheConfirmModal" class="tv-modal d-none" hidden role="dialog" aria-modal="true"
+    aria-labelledby="clearCacheConfirmTitle">
+    <div class="tv-modal-card tv-modal-card-small recovery-confirm-card">
+      <button class="tv-modal-close" type="button" data-close-cache-confirm aria-label="Close"><i
+          class="bi bi-x-lg"></i></button>
+      <div class="tv-modal-icon danger"><i class="bi bi-trash3-fill"></i></div>
+      <h2 id="clearCacheConfirmTitle">Clear all cached data?</h2>
+      <p class="tv-modal-help">All locally cached TVMaze posters, ratings, genres, summaries, and API results will be
+        removed. Your profile, watch history, and library will stay safe. A recovery snapshot will be created before
+        clearing.</p>
+      <div class="tv-modal-actions">
+        <button class="btn btn-outline-secondary" type="button" data-close-cache-confirm>Cancel</button>
+        <button id="clearCacheConfirmAction" class="btn btn-danger" type="button">Create snapshot & clear</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="recoveryConfirmModal" class="tv-modal d-none" hidden role="dialog" aria-modal="true"
+    aria-labelledby="recoveryConfirmTitle">
+    <div class="tv-modal-card tv-modal-card-small recovery-confirm-card">
+      <button class="tv-modal-close" type="button" data-close-recovery-confirm aria-label="Close"><i
+          class="bi bi-x-lg"></i></button>
+      <div class="tv-modal-icon"><i class="bi bi-shield-exclamation"></i></div>
+      <h2 id="recoveryConfirmTitle">Confirm action</h2>
+      <p id="recoveryConfirmText" class="tv-modal-help"></p>
+      <div class="tv-modal-actions"><button class="btn btn-outline-secondary" type="button"
+          data-close-recovery-confirm>Cancel</button><button id="recoveryConfirmAction" class="btn btn-success"
+          type="button">Confirm</button></div>
+    </div>
+  </div>
+
+  <div id="episodeOverviewModal" class="season-modal d-none" hidden role="dialog" aria-modal="true"
+    aria-labelledby="episodeOverviewTitle">
+    <div class="season-modal-shell episode-overview-shell">
+      <header class="season-modal-header">
+        <div class="season-modal-heading">
+          <span class="season-modal-show-title">Episode center</span>
+          <h3 id="episodeOverviewTitle">New Episodes</h3>
+        </div>
+        <button class="season-modal-close" type="button" data-close-episode-overview aria-label="Close"><i
+            class="bi bi-x-lg"></i></button>
+      </header>
+      <div class="episode-overview-tabs" role="tablist">
+        <button class="episode-overview-tab active" type="button" data-episode-overview-tab="new">New Episodes</button>
+        <button class="episode-overview-tab" type="button" data-episode-overview-tab="upcoming">Upcoming This
+          Week</button>
+      </div>
+      <div id="episodeOverviewList" class="season-modal-episode-list"></div>
+    </div>
+  </div>
+
+  <div id="seasonEpisodesModal" class="season-modal d-none" hidden role="dialog" aria-modal="true"
+    aria-labelledby="seasonModalSeasonTitle">
+    <div class="season-modal-shell">
+      <header class="season-modal-header">
+        <div class="season-modal-heading">
+          <span id="seasonModalShowTitle" class="season-modal-show-title"></span>
+          <h3 id="seasonModalSeasonTitle">Season</h3>
+        </div>
+        <button class="season-modal-close" type="button" data-close-season-modal aria-label="Close season"><i
+            class="bi bi-x-lg"></i></button>
+      </header>
+      <div class="season-modal-summary">
+        <div class="season-modal-progress-copy"><strong id="seasonModalCount">0 / 0</strong><span
+            id="seasonModalPercent">0%</span></div>
+        <div class="progress season-modal-progress">
+          <div id="seasonModalProgressBar" class="progress-bar" style="width:0%"></div>
+        </div>
+        <button id="seasonModalBulkToggle" class="btn btn-sm btn-outline-primary" type="button"
+          data-season-modal-bulk=""><i class="bi bi-check2-all"></i> Mark all watched</button>
+      </div>
+      <div id="seasonModalEpisodeList" class="season-modal-episode-list"></div>
+    </div>
+  </div>
+
+
   <script src="js/bootstrap.min.js"></script>
   <script src="js/wow.min.js"></script>
-  <script src="js/db01.js"></script>
-  <script src="js/main.js"></script>
+  <script src="js/errorHandler.js"></script>
+  <script src="js/profiles.js"></script>
+  <script src="js/core.js"></script>
+  <script src="js/tvmaze.js"></script>
+  <script src="js/seasonModal.js"></script>
+  <script src="js/catalog.js"></script>
+  <script src="js/calendar.js"></script>
+  <script src="js/discovery.js"></script>
   <script src="js/source.js"></script>
+  <script src="js/recovery.js"></script>
+  <script src="js/bootstrap.js"></script>
 
 </body>
 
